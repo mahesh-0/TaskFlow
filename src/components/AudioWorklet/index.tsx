@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Volume2, Zap, Music, VolumeX, Volume1 } from "lucide-react";
+import { Volume2, Music, VolumeX, Volume1 } from "lucide-react";
 
 export default function AudioWorklet() {
   const [isPlaying, setIsPlaying] = useState(false);
@@ -26,7 +26,6 @@ export default function AudioWorklet() {
         new URL("../../workers/audio-processor.js", import.meta.url)
       );
 
-      // Create gain node for volume control
       const gainNode = ctx.createGain();
       gainNode.gain.value = isMuted ? 0 : volume;
       gainNodeRef.current = gainNode;
@@ -34,11 +33,9 @@ export default function AudioWorklet() {
       const node = new (window as any).AudioWorkletNode(ctx, "demo-processor");
       workletNodeRef.current = node;
 
-      // Connect: worklet -> gain -> destination
       node.connect(gainNode);
       gainNode.connect(ctx.destination);
 
-      // Send initial parameters to worklet
       node.port.postMessage({ type: "updateVolume", data: volume });
       node.port.postMessage({ type: "updateFilter", data: filterFreq });
 
@@ -64,7 +61,6 @@ export default function AudioWorklet() {
     setMode(null);
   };
 
-  // Update volume when it changes
   useEffect(() => {
     if (gainNodeRef.current) {
       gainNodeRef.current.gain.value = isMuted ? 0 : volume;
@@ -77,7 +73,6 @@ export default function AudioWorklet() {
     }
   }, [volume, isMuted]);
 
-  // Update filter frequency
   useEffect(() => {
     if (workletNodeRef.current) {
       workletNodeRef.current.port.postMessage({
