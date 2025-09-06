@@ -33,12 +33,11 @@ export default function DedicatedWorker() {
 
     const api = Comlink.wrap<{
       processImageChunk(
-        chunk: Uint8ClampedArray,
-        filterType: string
+        chunk: Uint8ClampedArray
       ): Promise<Uint8ClampedArray>;
     }>(worker);
 
-    const processedData = await api.processImageChunk(data, "grayscale");
+    const processedData = await api.processImageChunk(data);
 
     worker.terminate();
 

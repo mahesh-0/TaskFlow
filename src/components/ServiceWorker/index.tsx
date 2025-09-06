@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Cpu, Wifi, WifiOff } from "lucide-react";
@@ -9,18 +9,16 @@ export default function ServiceWorker() {
   const [isOnline, setIsOnline] = useState(navigator.onLine);
   const [cachedData, setCachedData] = useState<any>(null);
 
-  useState(() => {
+  useEffect(() => {
     const handleOnline = () => setIsOnline(true);
     const handleOffline = () => setIsOnline(false);
-
     window.addEventListener("online", handleOnline);
     window.addEventListener("offline", handleOffline);
-
     return () => {
       window.removeEventListener("online", handleOnline);
       window.removeEventListener("offline", handleOffline);
     };
-  });
+  }, []);
 
   const registerServiceWorker = async () => {
     try {
